@@ -1,8 +1,8 @@
-//const path = require('path')
+const path = require("path");
 const express = require("express");
 const xss = require("xss");
 const logger = require("../logger");
-const FoldersService = require("./folders-service");
+const FoldersService = require("./noteful-folders-service");
 const foldersRouter = express.Router();
 const bodyParser = express.json();
 const { v4: uuidv4 } = require("uuid");
@@ -15,7 +15,7 @@ const serializeFolder = (folder) => ({
 
 //Add a new folder
 foldersRouter
-  .route("/")
+  .route("/api/folders")
   .get((req, res, next) => {
     const knexInstance = req.app.get("db");
 
@@ -41,14 +41,14 @@ foldersRouter
         logger.info(`Folder with id ${folder.id} created.`);
         res
           .status(201)
-          .location(req.originalUrl + `/${folder.id}`)
+          .location(path.posix.join(req.originalUrl, `/${folder.id}`))
           .json(serializeFolder(folder));
       })
       .catch(next);
   });
 
 foldersRouter
-  .route("/:id")
+  .route("/api/folders/:id")
   .all((req, res, next) => {
     const knexInstance = req.app.get("db");
     const { id } = req.params;

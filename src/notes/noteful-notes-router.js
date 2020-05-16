@@ -14,7 +14,7 @@ const serializeNote = (note) => ({
 });
 
 notesRouter
-  .route("/")
+  .route("/api/notes")
   .get((req, res, next) => {
     const knexInstance = req.app.get("db");
     notefulNotesService
@@ -46,7 +46,7 @@ notesRouter
   });
 
 notesRouter
-  .route("/:id")
+  .route("/api/notes/:id")
   .all((req, res, next) => {
     const knexInstance = req.app.get("db");
     notefulNotesService
@@ -96,4 +96,4 @@ notesRouter
       .catch(next);
   });
 
-module.exports = articlesRouter;
+module.exports = notesRouter;
