@@ -14,7 +14,7 @@ const serializeNote = (note) => ({
 });
 
 notesRouter
-  .route("/api/notes")
+  .route("/")
   .get((req, res, next) => {
     const knexInstance = req.app.get("db");
     notefulNotesService
@@ -46,7 +46,7 @@ notesRouter
   });
 
 notesRouter
-  .route("/api/notes/:id")
+  .route("/")
   .all((req, res, next) => {
     const knexInstance = req.app.get("db");
     notefulNotesService
@@ -85,11 +85,8 @@ notesRouter
         },
       });
 
-    ArticlesService.updateArticle(
-      req.app.get("db"),
-      req.params.article_id,
-      articleToUpdate
-    )
+    notefulNotesService
+      .updateNote(req.app.get("db"), req.params.note_id, articleToUpdate)
       .then((numRowsAffected) => {
         res.status(204).end();
       })
