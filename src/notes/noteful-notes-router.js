@@ -7,10 +7,10 @@ const jsonParser = express.json();
 
 const serializeNote = (note) => ({
   id: note.id,
-  note_name: note.note_name,
+  name: xss(note.note_name),
   modified: note.modified,
-  folder_id: note.folder_id,
-  content: note.content,
+  folderId: note.folder_id,
+  content: xss(note.content),
 });
 
 notesRouter
@@ -66,8 +66,11 @@ notesRouter
     res.json(serializeNote(res.note));
   })
   .delete((req, res, next) => {
+    const knexInstance = req.app.get("db");
+    const deleteNoteId = res.note.id;
+
     notefulNotesService
-      .deleteNote(knexInstance, req.params.note_id)
+      .deleteNote(knexInstance, deleteNoteId)
       .then((numRowsAffected) => {
         res.status(204).end();
       })
@@ -76,8 +79,7 @@ notesRouter
   .patch((req, res, next) => {
     const { note_name, modified, content, folder_id } = req.body;
     const noteToUpdate = { note_name, modified, content, folder_id };
-    const numberOfValues = Object.values(articleToUpdate).filter(Boolean)
-      .length;
+    const numberOfValues = Object.values(noteToUpdate).filter(Boolean).length;
     if (numberOfValues === 0)
       return res.status(400).json({
         error: {

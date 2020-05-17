@@ -5,12 +5,12 @@ const logger = require("../logger");
 const FoldersService = require("./noteful-folders-service");
 const foldersRouter = express.Router();
 const bodyParser = express.json();
-const { v4: uuidv4 } = require("uuid");
+// const { v4: uuidv4 } = require("uuid");
 
 //serialize folder- xss
 const serializeFolder = (folder) => ({
   id: folder.id,
-  name: xss(folder.name),
+  name: xss(folder.folder_name),
 });
 
 //Add a new folder
@@ -27,10 +27,10 @@ foldersRouter
   })
   .post(bodyParser, (req, res, next) => {
     const knexInstance = req.app.get("db");
-    const { name } = req.body;
-    const newFolder = { name, id: uuidv4() };
+    const { folder_name } = req.body;
+    const newFolder = { folder_name };
 
-    if (!name) {
+    if (!folder_name) {
       return res.status(400).json({
         error: { message: `Missing Folder Name in request body` },
       });
